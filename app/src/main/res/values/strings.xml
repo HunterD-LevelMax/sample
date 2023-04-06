@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Sample</string>
+    <string name="internet_status_message">Проверьте подключение к интернету и перезапустите приложение</string>
 </resources>

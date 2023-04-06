@@ -18,7 +18,8 @@ class WebActivity : AppCompatActivity() {
         binding = ActivityWebBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        url = intent.getStringExtra("url").toString()
+        setupWebView(url)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -48,7 +49,7 @@ class WebActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (!getInternetStatus(this)) {
-            Toast.makeText(this, messageInternetStatus, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, internetStatusMessage, Toast.LENGTH_SHORT).show()
         }
         if (binding.webView.canGoBack()) {
             binding.webView.goBack()
@@ -66,7 +67,7 @@ class WebActivity : AppCompatActivity() {
 
     override fun onResume() {
         if (!getInternetStatus(this)) {
-            Toast.makeText(this, messageInternetStatus, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, internetStatusMessage, Toast.LENGTH_SHORT).show()
         }
         super.onResume()
         CookieManager.getInstance().flush()

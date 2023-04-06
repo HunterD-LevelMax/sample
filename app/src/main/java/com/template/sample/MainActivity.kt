@@ -1,12 +1,10 @@
 package com.template.sample
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.telephony.TelephonyManager
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
@@ -35,19 +33,9 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         try {
-            var loadUrl = loadUrl()
-
-
-            //заменить while на поток
-            while (loadUrl != "null") {
-                loadUrl = loadUrl()
-
-                if (loadUrl == "null") {
-                    //ЗАПРОС URL
-                    //  saveUrl("URL")
-                    showToast("URL SAVE")
-                    break
-                }
+            if (loadUrl() == "null") {
+                println("Load URL: ${loadUrl()}")
+                requestUrl(loadUrl())
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -59,39 +47,48 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         setVisibility(binding.menuGroup, View.VISIBLE)
         setVisibility(binding.progressBar, View.GONE)
+        setVisibility(binding.imageView, View.GONE)
 
         val simStatus = getSimStatus(this)
-        var internetStatus = getInternetStatus(this)
+        val internetStatus = getInternetStatus(this)
 
         when (!simStatus) {
             true -> {
-                showToast("No simCard and start GAME")
-                // replaceActivity(GameActivity())
+                replaceActivity(GameActivity())
             }
             false -> {
                 setVisibility(binding.menuGroup, View.GONE)
                 setVisibility(binding.progressBar, View.VISIBLE)
+                setVisibility(binding.imageView, View.VISIBLE)
 
                 if (!internetStatus) {
-                    showToast("НЕТ ИНТЕРНЕТА")
-
-                    // заменить while на поток
-                        while (internetStatus!=true) {
-                            internetStatus = getInternetStatus(this)
-                            println("Internet Status: ${getInternetStatus(this)}")
-
-                            if (internetStatus) {
-                                showToast("Replace WebView with url + ${loadUrl()}")
-                               // replaceActivity(WebActivity())
-                                break
-                            }
-                        }
+                    binding.textTitle.text = getString(R.string.internet_status_message)
+                    showToast(getString(R.string.internet_status_message))
                 } else {
-                    showToast("Replace WebView with url + ${loadUrl()}")
-                    // replaceActivity(WebActivity())
+                    println("REPLACE WEBVIEW with url")
+                    if (loadUrl() != "null") {
+                        replaceActivity(WebActivity(), loadUrl())
+                    }
                 }
             }
         }
+
+        binding.apply {
+
+            buttonGame.setOnClickListener {
+                replaceActivity(GameActivity())
+            }
+
+            buttonAbout.setOnClickListener {
+                replaceActivity(WebActivity(), URL_ABOUT)
+            }
+
+            buttonSettings.setOnClickListener {
+                replaceActivity(SettingsActivity())
+            }
+
+        }
+
     }
 
     private fun setVisibility(view: View, visibility: Int) {
@@ -104,9 +101,37 @@ class MainActivity : AppCompatActivity() {
         return telephonyManager.simState != TelephonyManager.SIM_STATE_ABSENT
     }
 
-    private fun replaceActivity(activity: AppCompatActivity) {
-        val intent = Intent(this, activity::class.java)
-        startActivity(intent)
+    private fun requestUrl(finalUrl: String) {
+        when (finalUrl) {
+            "null" -> saveUrl("www.google")
+            else -> {
+                if (getInternetStatus(this@MainActivity)) {
+                    db = FirebaseDatabase.getInstance()
+                    val ref = db.reference.child("url")
+                    runBlocking {
+                        withContext(Dispatchers.IO) {
+                            ref.addValueEventListener(object : ValueEventListener {
+
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    url = dataSnapshot.getValue(String::class.java).toString()
+                                    saveUrl(getRedirectUrl(url))
+                                    println("Ваша ссылка FirebaseRD: $url")
+                                    println("Ваша ссылка после редиректов: ${loadUrl()}")
+                                }
+
+                                override fun onCancelled(e: DatabaseError) {
+                                    e.toException().printStackTrace()
+                                    showToast("Error Firebase RD")
+                                }
+                            })
+                        }
+                    }
+                } else {
+                    showToast(getString(R.string.internet_status_message))
+                }
+
+            }
+        }
     }
 
     private fun getRedirectUrl(urlString: String): String {
@@ -138,34 +163,6 @@ class MainActivity : AppCompatActivity() {
         return redirectedUrl
     }
 
-    private fun requestUrl(finalUrl: String) {
-        when (finalUrl) {
-            "null" -> return
-            else -> {
-                db = FirebaseDatabase.getInstance()
-                val ref = db.reference.child("url")
-                runBlocking {
-                    withContext(Dispatchers.IO) {
-                        ref.addValueEventListener(object : ValueEventListener {
-
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                url = dataSnapshot.getValue(String::class.java).toString()
-                                saveUrl(getRedirectUrl(url))
-                                println("Ваша ссылка FirebaseRD: $url")
-                                println("Ваша ссылка после редиректов: ${loadUrl()}")
-                            }
-
-                            override fun onCancelled(e: DatabaseError) {
-                                e.toException().printStackTrace()
-                                showToast("Error Firebase RD")
-                            }
-                        })
-                    }
-                }
-            }
-        }
-    }
-
     private fun saveUrl(url: String) {
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("SAVE_URL", Context.MODE_PRIVATE)
@@ -173,7 +170,6 @@ class MainActivity : AppCompatActivity() {
         editor.apply {
             putString("URL", url)
         }.apply()
-        Toast.makeText(this, "СОХРАНЕНА", Toast.LENGTH_SHORT)
     }
 
     private fun loadUrl(): String {

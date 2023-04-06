@@ -8,14 +8,18 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 
 
-const val messageInternetStatus = "Проверьте подключение к интернету и перезапустите приложение"
-var countBalloons = 10
-
+const val internetStatusMessage = "Проверьте подключение к интернету и перезапустите приложение"
 const val URL_ABOUT = "google.com"
 
 fun AppCompatActivity.replaceActivity(activity: AppCompatActivity) {
     val intent = Intent(this, activity::class.java)
     startActivity(intent)
+}
+fun AppCompatActivity.replaceActivity(activity: AppCompatActivity, url:String) {
+    val intent = Intent(this, activity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+    intent.putExtra("url", url)
+    startActivity(intent)
+    this.finish()
 }
 
 fun getInternetStatus(context: Context): Boolean {
