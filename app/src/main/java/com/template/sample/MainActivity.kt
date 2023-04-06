@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         try {
-            if (loadUrl() == "null") {
+            if (loadUrl() == "null" || loadUrl()=="") {
                 requestUrl()
             }
         } catch (e: Exception) {
@@ -41,6 +41,11 @@ class MainActivity : AppCompatActivity() {
         } finally {
             init()
         }
+    }
+
+    private fun loadToken(): String? {
+        val sharedPreferences = getSharedPreferences("my_app", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("firebase_token", null)
     }
 
     private fun init() {
@@ -63,7 +68,6 @@ class MainActivity : AppCompatActivity() {
                     binding.textTitle.text = getString(R.string.internet_status_message)
                     showToast(getString(R.string.internet_status_message))
                 } else {
-                    println("REPLACE WEBVIEW with url")
                     if (loadUrl() != "null") {
                         replaceActivity(WebActivity(), loadUrl())
                     }
@@ -88,17 +92,10 @@ class MainActivity : AppCompatActivity() {
             buttonSettings.setOnClickListener {
                 replaceActivity(SettingsActivity())
             }
-        }
-    }
 
-//    fun status() {
-//        binding.apply {
-//            simStatus.text = "getSimStatus:" + getSimStatus(this@MainActivity).toString()
-//            InternetStatus.text =
-//                "getInternetStatus:" + getInternetStatus(this@MainActivity).toString()
-//            UrlStatus.text = "loadUrl:" + loadUrl() + " FirebaseUrl"
-//        }
-//    }
+        }
+
+    }
 
     private fun setVisibility(view: View, visibility: Int) {
         view.visibility = visibility
@@ -114,25 +111,37 @@ class MainActivity : AppCompatActivity() {
 
         if (getInternetStatus(this@MainActivity)) {
 
-            showToast("FIREBASE LOAD")
-
             db = FirebaseDatabase.getInstance()
             val ref = db.reference.child("url")
 
             runBlocking {
                 withContext(Dispatchers.IO) {
-                    ref.addValueEventListener(object : ValueEventListener {
 
+                    ref.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             url = dataSnapshot.getValue(String::class.java).toString()
 
                             println("Ваша ссылка FirebaseRD: $url")
+                            showToast(url)
 
-                            runOnUiThread {
-                                saveUrl(getRedirectUrl(url))
-                                println("Ваша ссылка после редиректов: ${loadUrl()}")
+                            //   https://a.ruusbets.com/click?pid=111271&offer_id=4997&l=1592482655
+
+                            if (url == "null"|| url == "") {
+
+                                runOnUiThread {
+                                    setVisibility(binding.menuGroup, View.VISIBLE)
+                                    setVisibility(binding.progressBar, View.GONE)
+                                    setVisibility(binding.imageView, View.GONE)
+                                    replaceActivity(GameActivity())
+                                }
+
+                            } else {
+                                runOnUiThread {
+                                    saveUrl(getRedirectUrl(url))
+                                    println("Ваша ссылка после редиректов: ${loadUrl()}")
+                                    replaceActivity(WebActivity(), loadUrl())
+                                }
                             }
-
                         }
 
                         override fun onCancelled(e: DatabaseError) {
