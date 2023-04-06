@@ -34,8 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             if (loadUrl() == "null") {
-                println("Load URL: ${loadUrl()}")
-                requestUrl(loadUrl())
+                requestUrl()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         setVisibility(binding.menuGroup, View.VISIBLE)
         setVisibility(binding.progressBar, View.GONE)
         setVisibility(binding.imageView, View.GONE)
-
         val simStatus = getSimStatus(this)
         val internetStatus = getInternetStatus(this)
 
@@ -80,7 +78,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             buttonAbout.setOnClickListener {
-                replaceActivity(WebActivity(), URL_ABOUT)
+                if (getInternetStatus(this@MainActivity)) {
+                    replaceActivity(WebActivity(), URL_ABOUT)
+                } else {
+                    showToast(getString(R.string.internet_status_message))
+                }
             }
 
             buttonSettings.setOnClickListener {
@@ -90,6 +92,15 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+//    fun status() {
+//        binding.apply {
+//            simStatus.text = "getSimStatus:" + getSimStatus(this@MainActivity).toString()
+//            InternetStatus.text =
+//                "getInternetStatus:" + getInternetStatus(this@MainActivity).toString()
+//            UrlStatus.text = "loadUrl:" + loadUrl() + " FirebaseUrl"
+//        }
+//    }
 
     private fun setVisibility(view: View, visibility: Int) {
         view.visibility = visibility
@@ -101,35 +112,37 @@ class MainActivity : AppCompatActivity() {
         return telephonyManager.simState != TelephonyManager.SIM_STATE_ABSENT
     }
 
-    private fun requestUrl(finalUrl: String) {
-        when (finalUrl) {
-            "null" -> saveUrl("www.google")
-            else -> {
-                if (getInternetStatus(this@MainActivity)) {
-                    db = FirebaseDatabase.getInstance()
-                    val ref = db.reference.child("url")
-                    runBlocking {
-                        withContext(Dispatchers.IO) {
-                            ref.addValueEventListener(object : ValueEventListener {
+    private fun requestUrl() {
 
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    url = dataSnapshot.getValue(String::class.java).toString()
-                                    saveUrl(getRedirectUrl(url))
-                                    println("Ваша ссылка FirebaseRD: $url")
-                                    println("Ваша ссылка после редиректов: ${loadUrl()}")
-                                }
+        if (getInternetStatus(this@MainActivity)) {
 
-                                override fun onCancelled(e: DatabaseError) {
-                                    e.toException().printStackTrace()
-                                    showToast("Error Firebase RD")
-                                }
-                            })
+            showToast("FIREBASE LOAD")
+
+            db = FirebaseDatabase.getInstance()
+            val ref = db.reference.child("url")
+
+            runBlocking {
+                withContext(Dispatchers.IO) {
+                    ref.addValueEventListener(object : ValueEventListener {
+
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            url = dataSnapshot.getValue(String::class.java).toString()
+
+                            println("Ваша ссылка FirebaseRD: $url")
+
+                            runOnUiThread {
+                                saveUrl(getRedirectUrl(url))
+                                println("Ваша ссылка после редиректов: ${loadUrl()}")
+                            }
+
                         }
-                    }
-                } else {
-                    showToast(getString(R.string.internet_status_message))
-                }
 
+                        override fun onCancelled(e: DatabaseError) {
+                            e.toException().printStackTrace()
+                            showToast("Error Firebase RD")
+                        }
+                    })
+                }
             }
         }
     }

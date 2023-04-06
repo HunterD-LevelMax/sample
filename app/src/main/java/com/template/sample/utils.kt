@@ -7,9 +7,8 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 
-
 const val internetStatusMessage = "Проверьте подключение к интернету и перезапустите приложение"
-const val URL_ABOUT = "google.com"
+const val URL_ABOUT = "www.google.com"
 
 fun AppCompatActivity.replaceActivity(activity: AppCompatActivity) {
     val intent = Intent(this, activity::class.java)
