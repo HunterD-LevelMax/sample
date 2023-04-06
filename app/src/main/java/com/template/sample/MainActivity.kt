@@ -88,9 +88,7 @@ class MainActivity : AppCompatActivity() {
             buttonSettings.setOnClickListener {
                 replaceActivity(SettingsActivity())
             }
-
         }
-
     }
 
 //    fun status() {

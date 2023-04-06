@@ -46,7 +46,6 @@ class WebActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onBackPressed() {
         if (!getInternetStatus(this)) {
             Toast.makeText(this, internetStatusMessage, Toast.LENGTH_SHORT).show()
