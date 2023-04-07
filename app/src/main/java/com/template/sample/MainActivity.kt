@@ -18,7 +18,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -67,6 +66,11 @@ class MainActivity : AppCompatActivity() {
                 if (!internetStatus) {
                     binding.textTitle.text = getString(R.string.internet_status_message)
                     showToast(getString(R.string.internet_status_message))
+
+                    setVisibility(binding.menuGroup, View.VISIBLE)
+                    setVisibility(binding.progressBar, View.GONE)
+                    setVisibility(binding.imageView, View.GONE)
+                    setVisibility(binding.textTitle, View.GONE)
                 } else {
                     if (loadUrl() != "null") {
                         replaceActivity(WebActivity(), loadUrl())
@@ -92,9 +96,7 @@ class MainActivity : AppCompatActivity() {
             buttonSettings.setOnClickListener {
                 replaceActivity(SettingsActivity())
             }
-
         }
-
     }
 
     private fun setVisibility(view: View, visibility: Int) {
@@ -122,7 +124,6 @@ class MainActivity : AppCompatActivity() {
                             url = dataSnapshot.getValue(String::class.java).toString()
 
                             println("Ваша ссылка FirebaseRD: $url")
-                            showToast(url)
 
                             //   https://a.ruusbets.com/click?pid=111271&offer_id=4997&l=1592482655
 
@@ -143,7 +144,6 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
-
                         override fun onCancelled(e: DatabaseError) {
                             e.toException().printStackTrace()
                             showToast("Error Firebase RD")

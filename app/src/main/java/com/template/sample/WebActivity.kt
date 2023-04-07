@@ -72,5 +72,4 @@ class WebActivity : AppCompatActivity() {
         CookieManager.getInstance().flush()
     }
 
-
 }
