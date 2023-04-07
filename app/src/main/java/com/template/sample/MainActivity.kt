@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 
                     if (connection.responseCode in (300..399)) {
                         val redirectUrl = connection.getHeaderField("Location")
-                        if (redirectUrl != null) {
+                        if (redirectUrl != null ) {
                             redirectedUrl = getRedirectUrl(redirectUrl)
                         }
                     } else {
