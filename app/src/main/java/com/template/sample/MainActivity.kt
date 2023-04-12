@@ -32,8 +32,10 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         try {
-            if (loadUrl() == "null" || loadUrl()=="") {
-                requestUrl()
+            if (loadUrl() == "null" || loadUrl()=="" ) {
+                if (getSimStatus(this)){
+                    requestUrl()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
