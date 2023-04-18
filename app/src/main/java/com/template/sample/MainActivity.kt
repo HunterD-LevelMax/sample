@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
@@ -26,6 +27,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var url: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
