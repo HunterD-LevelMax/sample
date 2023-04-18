@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -32,8 +33,8 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         try {
-            if (loadUrl() == "null" || loadUrl()=="" ) {
-                if (getSimStatus(this)){
+            if (loadUrl() == "null" || loadUrl() == "") {
+                if (getSimStatus(this)) {
                     requestUrl()
                 }
             }
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 
                             //   https://a.ruusbets.com/click?pid=111271&offer_id=4997&l=1592482655
 
-                            if (url == "null"|| url == "") {
+                            if (url == "null" || url == "") {
 
                                 runOnUiThread {
                                     setVisibility(binding.menuGroup, View.VISIBLE)
@@ -146,6 +147,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
+
                         override fun onCancelled(e: DatabaseError) {
                             e.toException().printStackTrace()
                             showToast("Error Firebase RD")
@@ -169,7 +171,7 @@ class MainActivity : AppCompatActivity() {
 
                     if (connection.responseCode in (300..399)) {
                         val redirectUrl = connection.getHeaderField("Location")
-                        if (redirectUrl != null ) {
+                        if (redirectUrl != null) {
                             redirectedUrl = getRedirectUrl(redirectUrl)
                         }
                     } else {

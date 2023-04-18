@@ -48,7 +48,8 @@ class WebActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (!getInternetStatus(this)) {
-            Toast.makeText(this, internetStatusMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.internet_status_message), Toast.LENGTH_SHORT)
+                .show()
         }
         if (binding.webView.canGoBack()) {
             binding.webView.goBack()
@@ -66,10 +67,10 @@ class WebActivity : AppCompatActivity() {
 
     override fun onResume() {
         if (!getInternetStatus(this)) {
-            Toast.makeText(this, internetStatusMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.internet_status_message), Toast.LENGTH_SHORT)
+                .show()
         }
         super.onResume()
         CookieManager.getInstance().flush()
     }
-
 }
