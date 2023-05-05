@@ -1,10 +1,12 @@
 package com.template.sample
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 const val URL_ABOUT = "www.google.com"
@@ -31,5 +33,7 @@ fun getInternetStatus(context: Context): Boolean {
         val networkInfo = connectivityManager.activeNetworkInfo ?: return false
         return networkInfo.isConnected
     }
-
+}
+fun Activity.showToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

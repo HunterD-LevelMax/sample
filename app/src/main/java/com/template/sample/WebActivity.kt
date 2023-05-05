@@ -4,22 +4,18 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.WindowManager
 import android.webkit.CookieManager
 import android.webkit.WebViewClient
 import android.widget.Toast
 import com.template.sample.databinding.ActivityWebBinding
 
-class WebActivity : AppCompatActivity() {
+class WebActivity : BaseActivity() {
     private lateinit var binding: ActivityWebBinding
     private lateinit var url: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE)
-
         super.onCreate(savedInstanceState)
         binding = ActivityWebBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -52,17 +48,19 @@ class WebActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (!getInternetStatus(this)) {
-            Toast.makeText(this, getString(R.string.internet_status_message), Toast.LENGTH_SHORT)
-                .show()
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!getInternetStatus(this)) {
+                showToast(getString(R.string.internet_status_message))
+                return true
+            }
+            if (binding.webView.canGoBack()) {
+                binding.webView.goBack()
+                CookieManager.getInstance().flush()
+                return true
+            }
         }
-        if (binding.webView.canGoBack()) {
-            binding.webView.goBack()
-            CookieManager.getInstance().flush()
-        } else {
-            CookieManager.getInstance().flush()
-        }
+        return false
     }
 
     override fun onStop() {
