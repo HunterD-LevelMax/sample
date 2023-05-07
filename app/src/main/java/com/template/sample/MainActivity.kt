@@ -127,8 +127,6 @@ class MainActivity : BaseActivity() {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             url = dataSnapshot.getValue(String::class.java).toString()
 
-                            println("Ваша ссылка FirebaseRD: $url")
-
                             //   https://a.ruusbets.com/click?pid=111271&offer_id=4997&l=1592482655
 
                             if (url == "null" || url == "") {
@@ -143,7 +141,6 @@ class MainActivity : BaseActivity() {
                             } else {
                                 runOnUiThread {
                                     saveUrl(getRedirectUrl(url))
-                                    println("Ваша ссылка после редиректов: ${loadUrl()}")
                                     replaceActivity(WebActivity(), loadUrl())
                                 }
                             }
