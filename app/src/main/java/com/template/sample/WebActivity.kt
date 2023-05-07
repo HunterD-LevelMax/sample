@@ -2,10 +2,8 @@ package com.template.sample
 
 import android.annotation.SuppressLint
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.WindowManager
 import android.webkit.CookieManager
 import android.webkit.WebViewClient
 import android.widget.Toast
