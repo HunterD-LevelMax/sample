@@ -1,14 +1,12 @@
 package com.template.sample.activity
 
-import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.webkit.CookieManager
-import android.webkit.WebViewClient
 import android.widget.Toast
 import com.template.sample.R
 import com.template.sample.customclass.CustomActivity
+import com.template.sample.customclass.CustomWebView
 import com.template.sample.databinding.ActivityWebBinding
 import com.template.sample.getInternetStatus
 import com.template.sample.showToast
@@ -16,6 +14,7 @@ import com.template.sample.showToast
 class WebActivity : CustomActivity() {
     private lateinit var binding: ActivityWebBinding
     private lateinit var url: String
+    private lateinit var webView: CustomWebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,31 +22,8 @@ class WebActivity : CustomActivity() {
         setContentView(binding.root)
 
         url = intent.getStringExtra("url").toString()
-        setupWebView(url)
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun setupWebView(url: String) {
-        binding.apply {
-            binding.webView.webViewClient = WebViewClient()
-            webView.apply {
-                settings.apply {
-                    javaScriptEnabled = true
-                    javaScriptCanOpenWindowsAutomatically = true
-                    cacheMode
-                    allowContentAccess = true
-                    userAgentString
-                    setSupportMultipleWindows(true)
-                    domStorageEnabled = true
-                    CookieManager.getInstance().setAcceptCookie(true)
-                    CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    settings.safeBrowsingEnabled = true
-                }
-            }
-            webView.loadUrl(url)
-        }
+        webView = binding.webView
+        webView.loadUrl(url)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
