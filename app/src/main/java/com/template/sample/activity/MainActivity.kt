@@ -1,4 +1,4 @@
-package com.template.sample
+package com.template.sample.activity
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -11,6 +11,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.template.sample.*
+import com.template.sample.customclass.CustomActivity
 import com.template.sample.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -18,7 +20,7 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-class MainActivity : BaseActivity() {
+class MainActivity : CustomActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var db: FirebaseDatabase

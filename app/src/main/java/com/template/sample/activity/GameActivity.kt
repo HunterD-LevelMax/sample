@@ -1,9 +1,10 @@
-package com.template.sample
+package com.template.sample.activity
 
 import android.os.Bundle
+import com.template.sample.customclass.CustomActivity
 import com.template.sample.databinding.ActivityGameBinding
 
-class GameActivity : BaseActivity() {
+class GameActivity : CustomActivity() {
     private lateinit var binding: ActivityGameBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.template.sample
+package com.template.sample.firebase
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.template.sample.R
 
 class FirebaseMessagingService : FirebaseMessagingService() {
 

@@ -1,4 +1,4 @@
-package com.template.sample
+package com.template.sample.customclass
 
 import android.annotation.SuppressLint
 import android.content.Context

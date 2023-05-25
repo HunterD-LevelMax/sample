@@ -1,17 +1,19 @@
-package com.template.sample
+package com.template.sample.activity
 
 import android.annotation.SuppressLint
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.WindowManager
 import android.webkit.CookieManager
 import android.webkit.WebViewClient
 import android.widget.Toast
+import com.template.sample.R
+import com.template.sample.customclass.CustomActivity
 import com.template.sample.databinding.ActivityWebBinding
+import com.template.sample.getInternetStatus
+import com.template.sample.showToast
 
-class WebActivity : BaseActivity() {
+class WebActivity : CustomActivity() {
     private lateinit var binding: ActivityWebBinding
     private lateinit var url: String
 
